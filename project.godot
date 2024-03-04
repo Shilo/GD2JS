@@ -11,8 +11,15 @@ config_version=5
 [application]
 
 config/name="GD2JS"
+config/description="\"Godot To JavaScript\" (GD2JS) is a lightweight wrapper that enables seamless two-way communication between Godot game engine and JavaScript. It provides a simple and efficient way to trigger events and exchange data between the two environments."
+run/main_scene="res://src/main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=176
+window/size/viewport_height=246
 
 [rendering]
 
