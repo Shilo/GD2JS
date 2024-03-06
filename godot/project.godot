@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 
 window/size/viewport_width=176
 window/size/viewport_height=246
+window/dpi/allow_hidpi=false
 
 [rendering]
 

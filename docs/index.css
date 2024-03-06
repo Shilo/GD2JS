@@ -1,0 +1,75 @@
+body {
+    background-color: #4d4d4d;
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-size: 16px;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+}
+
+.web {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    gap: 8px;
+}
+
+.web > span {
+    text-align: center;
+}
+
+.fixed-size {
+    width: 176px;
+    height: 246px;
+}
+
+.icon {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon > img {
+    width: 128px;
+    height: 128px;
+}
+
+.icon > img.animate {
+    animation: icon-spin infinite 20s linear;
+}
+
+button {
+    background-color: #2e2e2e;
+    border: black;
+    color: white;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #414141;
+}
+
+button:active {
+    background-color: #1f1f1f;
+}
+
+@keyframes icon-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

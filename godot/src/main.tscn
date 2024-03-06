@@ -44,6 +44,7 @@ script = ExtResource("3_bggnf")
 [node name="Increment" type="Button" parent="MarginContainer/VBoxContainer" node_paths=PackedStringArray("count")]
 layout_mode = 2
 focus_mode = 0
+mouse_default_cursor_shape = 2
 text = "INCREMENT"
 script = ExtResource("4_80ib1")
 count = NodePath("../Count")

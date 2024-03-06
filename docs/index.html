@@ -2,14 +2,21 @@
 <html>
     <head>
         <title>GD2JS</title>
-        <style>
-            body {
-                background-color: #4d4d4d;
-            }
-        </style>
+        <link rel="stylesheet" href="index.css" />
     </head>
     <body>
-        <object data="godot/index.html" width="176" height="246"></object>
+        <div class="content">
+            <div class="godot fixed-size">
+                <object class="fixed-size" data="godot/index.html"></object>
+            </div>
+            <div class="web fixed-size">
+                <div class="icon">
+                    <img src="assets/html.svg" />
+                </div>
+                <span id="count">0</span>
+                <button onclick="decrement()">DECREMENT</button>
+            </div>
+        </div>
         <script></script>
     </body>
 </html>

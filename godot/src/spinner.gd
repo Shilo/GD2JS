@@ -1,6 +1,6 @@
 extends Control
 
-@export var spin_duration: float = 20
+@export var spin_duration: float = -20
 
 func _ready():
 	pivot_offset = size / 2
