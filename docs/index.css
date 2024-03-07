@@ -39,12 +39,12 @@ body {
     align-items: center;
 }
 
-.icon > img {
-    width: 128px;
-    height: 128px;
+.icon img {
+    max-width: 128px;
+    max-height: 128px;
 }
 
-.icon > img.animate {
+.icon img.animate {
     animation: icon-spin infinite 20s linear;
 }
 

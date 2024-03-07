@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://uk0apqfsscdo"]
 
 [ext_resource type="Texture2D" uid="uid://kwjqhiegst42" path="res://icon.svg" id="1_e7hxf"]
-[ext_resource type="Script" path="res://src/spinner.gd" id="2_tmm07"]
+[ext_resource type="Script" path="res://src/icon_url_button.gd" id="2_oilg5"]
 [ext_resource type="Script" path="res://src/count.gd" id="3_bggnf"]
 [ext_resource type="Script" path="res://src/increment_button.gd" id="4_80ib1"]
 
@@ -30,10 +30,11 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/IconContainer"]
+[node name="Icon" type="TextureButton" parent="MarginContainer/VBoxContainer/IconContainer"]
 layout_mode = 2
-texture = ExtResource("1_e7hxf")
-script = ExtResource("2_tmm07")
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("1_e7hxf")
+script = ExtResource("2_oilg5")
 
 [node name="Count" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
