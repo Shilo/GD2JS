@@ -1,0 +1,1 @@
+scons platform=web target=template_release build_profile="build_profile.build"
