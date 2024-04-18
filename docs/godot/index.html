@@ -2,7 +2,8 @@
 <html lang="en" style="height: 100%">
 <head>
     <title>GD2JS</title>
-    
+    <link rel='manifest' href='index.manifest.json'>
+
 </head>
 <body style="height: 100%">
     <canvas id="canvas">
@@ -18,7 +19,7 @@
     <script>
         let progressBar = document.getElementById('progress-bar-inner');
 
-        new Engine({"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":10160,"index.wasm":17617555},"focusCanvas":false,"gdextensionLibs":[]}).startGame({
+        new Engine({"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":10160,"index.wasm":17617555},"focusCanvas":false,"gdextensionLibs":[],"serviceWorker":"index.service.worker.js"}).startGame({
             onProgress: (current, total) => progressBar.style.width = `${(current / total) * 100}%`,
         }).then(() => {
             progressBar.parentElement.remove();
