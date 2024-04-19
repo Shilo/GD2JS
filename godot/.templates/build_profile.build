@@ -213,8 +213,6 @@
 		"JSONRPC",
 		"JavaClass",
 		"JavaClassWrapper",
-		"JavaScriptBridge",
-		"JavaScriptObject",
 		"KinematicCollision2D",
 		"KinematicCollision3D",
 		"LabelSettings",
