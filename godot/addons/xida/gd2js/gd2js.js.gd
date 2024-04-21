@@ -44,6 +44,11 @@ const js := """
 			return true
 		},
 		removeAllEventListeners: (type) => {
+			if (!type) {
+				Object.keys(self._listeners).forEach(type => self.removeAllEventListeners(type))
+				return true
+			}
+
 			const listeners = self._listeners[type]
 			if (!listeners) return false
 
