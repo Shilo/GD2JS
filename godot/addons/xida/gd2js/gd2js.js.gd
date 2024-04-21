@@ -58,7 +58,7 @@ const js := """
 		},
 
 		_eval: null,
-		eval: (code) => self._eval ? self._eval(code) : console.warn('GD2JS: eval is disabled.'),
+		eval: (...code) => self._eval ? self._eval(...code) : console.warn('GD2JS: eval is disabled.'),
 
 		// Convenience methods for Godot style.
 

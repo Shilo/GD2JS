@@ -39,12 +39,12 @@ func set_gd_eval(enable: bool) -> void:
 	gd2js._eval = _gd_eval_callback
 
 func _gd_eval(code: Array) -> Error:
-	var error: Error
-	
 	for code_block in code:
 		var script := GDScript.new()
 		script.source_code = "static func _static_init():\n\t" + code_block.strip_edges().replace("\n", ";")
-		var err = script.reload()
-		if err: error = err
+		
+		var error := script.reload()
+		if error:
+			return error
 	
-	return error
+	return OK
