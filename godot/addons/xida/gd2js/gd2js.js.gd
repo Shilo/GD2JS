@@ -1,17 +1,13 @@
 const js := """
 (function () {
+	if (parent.GD2JS) return
+
 	const self = {
 		metadata: {},
 
-		setMeta: (name, value) => {
-			self.metadata[name] = value
-		},
-		removeMeta: (name) => {
-			delete self.metadata[name]
-		},
-		clearMeta: () => {
-			self.metadata = {}
-		},
+		setMeta: (name, value) => self.metadata[name] = value,
+		removeMeta: (name) => delete self.metadata[name],
+		clearMeta: () => self.metadata = {},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
 		getMetaKeys: () => Object.keys(self.metadata),
