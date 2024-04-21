@@ -1,25 +1,31 @@
-class_name GD2JS extends Object
+extends Node
 
-static var enabled: bool = OS.has_feature("web"):
+var enabled: bool = OS.has_feature("web"):
 	set(__): pass
 
-static var window: JavaScriptObject = JavaScriptBridge.get_interface("parent"):
+var window: JavaScriptObject = JavaScriptBridge.get_interface("parent"):
 	set(__): pass
 
-static var gd2js: JavaScriptObject:
+var gd2js: JavaScriptObject:
 	get: return window.GD2JS if window else null
-	set(__): pass
 
-static func _static_init() -> void:
-	if !_is_enabled(): return
+var _js_script_path: String:
+	get:
+		var path: String = get_script().resource_path
+		return path.insert(path.length() - 3, ".js")
+
+func _init() -> void:
+	if !enabled: return
 	
-	var js_script: GDScript = load("res://addons/xida/gd2js/gd2js.js.gd")
+	var js_script: GDScript = load(_js_script_path)
 	JavaScriptBridge.eval(js_script.js)
 
-static func add_event_listener() -> void:
+func add_event_listener() -> void:
+	if !_is_enabled(): return
+	
 	pass
 
-static func _is_enabled() -> bool:
+func _is_enabled() -> bool:
 	if (!enabled):
 		push_warning("[GDJS] Feature not allowed in non-web build.")
 	return enabled

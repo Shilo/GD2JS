@@ -18,6 +18,10 @@ boot_splash/bg_color=Color(0.301961, 0.301961, 0.301961, 1)
 boot_splash/show_image=false
 config/icon="res://icon.svg"
 
+[autoload]
+
+GD2JS="*res://addons/xida/gd2js/gd2js.gd"
+
 [display]
 
 window/size/viewport_width=176
@@ -27,6 +31,10 @@ window/dpi/allow_hidpi=false
 [dotnet]
 
 project/assembly_name="GD2JS"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/xida/gd2js/plugin.cfg")
 
 [rendering]
 

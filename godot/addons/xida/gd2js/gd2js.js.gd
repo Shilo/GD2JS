@@ -3,9 +3,15 @@ const js := """
 	const self = {
 		metadata: {},
 
-		setMeta: (name, value) => self.metadata[name] = value,
-		removeMeta: (name) => delete self.metadata[name],
-		clearMeta: () => self.metadata = {},
+		setMeta: (name, value) => {
+			self.metadata[name] = value
+		},
+		removeMeta: (name) => {
+			delete self.metadata[name]
+		},
+		clearMeta: () => {
+			self.metadata = {}
+		},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
 		getMetaKeys: () => Object.keys(self.metadata),
@@ -13,10 +19,9 @@ const js := """
 		addEventListener: (type, listener, options) => document.addEventListener(type, listener, options),
 		removeEventListener: (type, listener, options) => document.removeEventListener(type, listener, options),
 		dispatchEvent: (event, ...args) => {
-			// TODO: Allow arguments passed directly to addEventListener
 			if (!(event instanceof Event || typeof event === 'Event'))
 				event = new CustomEvent(event.toString(), { detail: args })
-			document.dispatchEvent(event)
+			return document.dispatchEvent(event)
 		},
 
 		// Convenience methods for Godot style.
