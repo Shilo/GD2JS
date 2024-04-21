@@ -7,7 +7,7 @@ const js := """
 
 		setMeta: (name, value) => self.metadata[name] = value,
 		removeMeta: (name) => delete self.metadata[name],
-		clearMeta: () => self.metadata = {},
+		clearAllMeta: () => self.metadata = {},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
 		getMetaKeys: () => Object.keys(self.metadata),
@@ -24,7 +24,7 @@ const js := """
 
 		set_meta: (...args) => self.setMeta.apply(null, args),
 		remove_meta: (...args) => self.removeMeta.apply(null, args),
-		clear_meta: (...args) => self.clearMeta.apply(null, args),
+		clear_all_meta: (...args) => self.clearAllMeta.apply(null, args),
 		get_meta: (...args) => self.getMeta.apply(null, args),
 		has_meta: (...args) => self.hasMeta.apply(null, args),
 		get_meta_list: (...args) => self.getMetaKeys.apply(null, args),
