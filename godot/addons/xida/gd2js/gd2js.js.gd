@@ -11,7 +11,8 @@ const js := """
 		clearAllMeta: () => self.metadata = {},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
-		getMetaKeys: () => Object.keys(self.metadata),
+		getMetaKeys: () => JSON.stringify(Object.keys(self.metadata)),
+		getMetaData: () => JSON.stringify(self.metadata),
 
 		addEventListener: (type, listener, options) => {
 			const wrappedListener = (event) => listener(...event.detail)
@@ -73,6 +74,7 @@ const js := """
 		get_meta: (...args) => self.getMeta.apply(null, args),
 		has_meta: (...args) => self.hasMeta.apply(null, args),
 		get_meta_list: (...args) => self.getMetaKeys.apply(null, args),
+		get_meta_data: (...args) => self.getMetaData.apply(null, args),
 
 		connect: (...args) => self.addEventListener.apply(null, args),
 		is_connected: (...args) => self.isEventListener.apply(null, args),

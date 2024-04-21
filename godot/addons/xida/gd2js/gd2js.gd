@@ -50,6 +50,41 @@ func _gd_eval(code: Array) -> Error:
 	
 	return OK
 
+func js_set_meta(name: String, value: Variant) -> Variant:
+	if !_is_enabled(): return
+	
+	return js.setMeta(name, value)
+
+func js_remove_meta(name: String) -> bool:
+	if !_is_enabled(): return false
+	
+	return js.removeMeta(name)
+
+func js_clear_all_meta() -> Variant:
+	if !_is_enabled(): return
+	
+	return js.clearAllMeta()
+
+func js_get_meta(name: String, default: Variant = null) -> Variant:
+	if !_is_enabled(): return
+	
+	return js.getMeta(name, default)
+
+func js_has_meta(name: String) -> bool:
+	if !_is_enabled(): return false
+	
+	return js.hasMeta(name)
+
+func js_get_meta_list() -> Array:
+	if !_is_enabled(): return []
+	
+	return str_to_var(js.getMetaKeys())
+
+func js_get_meta_data() -> Dictionary:
+	if !_is_enabled(): return {}
+	
+	return str_to_var(js.getMetaData())
+
 func js_connect(type: String, callable: Callable, options: Variant = false) -> JavaScriptObject:
 	if !_is_enabled(): return
 	
