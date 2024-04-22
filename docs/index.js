@@ -8,6 +8,8 @@ document.addEventListener('GD2JSLoaded', () => {
     decrementButton.disabled = false;
 });
 
+document.body.addEventListener('click', () => GD2JS.call_meta('unfocus_godot'));
+
 function decrement() {
     GD2JS.updateMeta('value', (value) => {
         value -= 1;
