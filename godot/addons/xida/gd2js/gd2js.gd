@@ -53,6 +53,7 @@ func _gd_eval(code: Array) -> Error:
 
 func js_set_meta(name: String, value: Variant) -> Variant:
 	if !_is_enabled(): return
+	value = js_variant(value)
 	
 	if value is Callable:
 		value = JavaScriptBridge.create_callback(value as Callable)
@@ -76,11 +77,16 @@ func js_clear_all_meta() -> Variant:
 
 func js_get_meta(name: String, default: Variant = null) -> Variant:
 	if !_is_enabled(): return
+	default = js_variant(default)
 	
 	return js.getMeta(name, default)
 
 func js_call_meta(name:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3: Variant = NAN, arg4: Variant = NAN) -> Variant:
 	if !_is_enabled(): return
+	arg1 = js_variant(arg1)
+	arg2 = js_variant(arg2)
+	arg3 = js_variant(arg3)
+	arg4 = js_variant(arg4)
 	
 	if is_nan(arg1): return js.callMeta(name)
 	if is_nan(arg2): return js.callMeta(name, arg1)
@@ -90,6 +96,7 @@ func js_call_meta(name:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3: V
 
 func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
 	if !_is_enabled(): return
+	args = js_variant(args)
 	
 	return js.callMetaV(name, args)
 
@@ -110,6 +117,7 @@ func js_get_meta_data() -> Dictionary:
 
 func js_connect(type: String, callable: Callable, options: Variant = false) -> JavaScriptObject:
 	if !_is_enabled(): return
+	options = js_variant(options)
 	
 	var wrapped_callback := JavaScriptBridge.create_callback(func(args): callable.callv(args))
 	var result: JavaScriptObject = js.addEventListener(type, wrapped_callback, options)
@@ -130,6 +138,7 @@ func js_is_connected(type: String, callable: Callable) -> bool:
 
 func js_disconnect(type: String, callable: Callable, options: Variant = false) -> bool:
 	if !_is_enabled(): return false
+	options = js_variant(options)
 	
 	var callbacks: Array = _event_callbacks[type]
 	if !callbacks: return false
@@ -169,6 +178,10 @@ func js_disconnect_all(type: String = "") -> bool:
 
 func js_emit_signal(type:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3: Variant = NAN, arg4: Variant = NAN) -> JavaScriptObject:
 	if !_is_enabled(): return
+	arg1 = js_variant(arg1)
+	arg2 = js_variant(arg2)
+	arg3 = js_variant(arg3)
+	arg4 = js_variant(arg4)
 	
 	if is_nan(arg1): return js.dispatchEvent(type)
 	if is_nan(arg2): return js.dispatchEvent(type, arg1)
@@ -178,6 +191,7 @@ func js_emit_signal(type:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3:
 
 func js_emit_signal_v(type:String, args: Array[Variant]) -> JavaScriptObject:
 	if !_is_enabled(): return
+	args = js_variant(args)
 	
 	return js.dispatchEventV(type, args)
 
