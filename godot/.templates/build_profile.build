@@ -445,7 +445,6 @@
 		"VideoStreamPlayback",
 		"VideoStreamPlayer",
 		"ViewPanner",
-		"Viewport",
 		"ViewportNavigationControl",
 		"ViewportRotationControl",
 		"ViewportTexture",
