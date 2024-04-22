@@ -13,7 +13,7 @@ const js := """
 		callMeta: (name, ...args) => {
 			const value = self.getMeta(name)
 			if (typeof value === 'function')
-				return value(...args)
+				return new Promise((resolve) => value(...args, { resolve }))
 
 			console.warn(`GD2JS: Meta "${name}" is not a function.`)
 			return undefined
@@ -21,7 +21,7 @@ const js := """
 		callMetaV: (name, argsArray) => {
 			const value = self.getMeta(name)
 			if (typeof value === 'function')
-				return value(...argsArray)
+				return new Promise((resolve) => value(...argsArray, { resolve }))
 
 			console.warn(`GD2JS: Meta "${name}" is not a function.`)
 			return undefined

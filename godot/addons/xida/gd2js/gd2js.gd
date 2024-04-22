@@ -59,7 +59,14 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 	
 	if value is Callable:
 		var callable: Callable = value
-		value = JavaScriptBridge.create_callback(func(args: Array): return callable.callv(args))
+		value = JavaScriptBridge.create_callback(func(args: Array):
+			var resolve: JavaScriptObject = args.pop_back()
+			
+			var result: Variant = callable.callv(args)
+			
+			resolve.resolve(result)
+			return result
+		)
 		_meta_callables[name] = {"callable": callable, "wrapped_callable": value}
 	
 	return js.setMeta(name, value)
