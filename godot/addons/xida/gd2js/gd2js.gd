@@ -71,6 +71,20 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 	
 	return js.setMeta(name, value)
 
+func js_update_meta(name: String, updater: Callable, default: Variant = null) -> Variant:
+	if !_is_enabled(): return
+	
+	var js_updater: JavaScriptObject = JavaScriptBridge.create_callback(func(args: Array):
+		var resolve: JavaScriptObject = args.pop_back()
+		
+		var result = updater.callv(args)
+		
+		resolve.resolve(result)
+		return result
+	)
+	
+	return js.updateMetaAsync(name, js_updater, default)
+
 func js_remove_meta(name: String) -> bool:
 	if !_is_enabled(): return false
 	

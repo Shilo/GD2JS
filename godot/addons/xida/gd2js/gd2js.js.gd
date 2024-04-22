@@ -9,10 +9,23 @@ const js := """
 		_listeners: {},
 
 		setMeta: (name, value) => self.metadata[name] = value,
+		updateMeta: (name, updater, defaultValue = null) => self.metadata[name] = updater(self.metadata[name] ?? defaultValue),
+		updateMetaAsync: async (name, updater, defaultValue = null) => {
+			return new Promise((resolve) => updater(self.metadata[name] ?? defaultValue, { resolve }))
+				.then((value) => self.metadata[name] = value)
+		},
 		removeMeta: (name) => delete self.metadata[name],
 		clearAllMeta: () => self.metadata = {},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
 		callMeta: (name, ...args) => {
+			const value = self.getMeta(name)
+			if (typeof value === 'function')
+				return value(...args)
+
+			console.warn(`GD2JS: Meta "${name}" is not a function.`)
+			return undefined
+		},
+		callMetaAsync: async (name, ...args) => {
 			const value = self.getMeta(name)
 			if (typeof value === 'function')
 				return new Promise((resolve) => value(...args, { resolve }))
@@ -20,7 +33,15 @@ const js := """
 			console.warn(`GD2JS: Meta "${name}" is not a function.`)
 			return undefined
 		},
-		callMetaV: (name, argsArray) => {
+		callMetaV: async (name, argsArray) => {
+			const value = self.getMeta(name)
+			if (typeof value === 'function')
+				return value(...argsArray)
+
+			console.warn(`GD2JS: Meta "${name}" is not a function.`)
+			return undefined
+		},
+		callMetaVAsync: async (name, argsArray) => {
 			const value = self.getMeta(name)
 			if (typeof value === 'function')
 				return new Promise((resolve) => value(...argsArray, { resolve }))
@@ -92,11 +113,15 @@ const js := """
 		// Convenience methods for Godot style.
 
 		set_meta: (...args) => self.setMeta.apply(null, args),
+		update_meta: (...args) => self.updateMeta.apply(null, args),
+		update_meta_async: async (...args) => await self.updateMetaAsync.apply(null, args),
 		remove_meta: (...args) => self.removeMeta.apply(null, args),
 		clear_all_meta: (...args) => self.clearAllMeta.apply(null, args),
 		get_meta: (...args) => self.getMeta.apply(null, args),
 		call_meta: (...args) => self.callMeta.apply(null, args),
+		call_meta_async: async (...args) => await self.callMetaAsync.apply(null, args),
 		call_meta_v: (...args) => self.callMetaV.apply(null, args),
+		call_meta_v_async: async (...args) => await self.callMetaVAsync.apply(null, args),
 		has_meta: (...args) => self.hasMeta.apply(null, args),
 		get_meta_list: (...args) => self.getMetaKeys.apply(null, args),
 		get_meta_data: (...args) => self.getMetaData.apply(null, args),

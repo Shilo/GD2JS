@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>GD2JS</title>
-        <link rel="stylesheet" href="index.css" />
-    </head>
-    <body>
-        <div class="content">
-            <div class="godot fixed-size">
-                <iframe src="godot/index.html" class="fixed-size" frameborder="0"></iframe>
-            </div>
-            <div class="web fixed-size">
-                <div class="icon">
-                    <a href="https://www.xida.de" target="_blank"
-                        ><img src="assets/xida.png"
-                    /></a>
-                </div>
-                <span id="count">0</span>
-                <button onclick="decrement()">DECREMENT</button>
-            </div>
+
+<head>
+    <title>GD2JS</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+    <div class="content">
+        <div class="godot fixed-size">
+            <iframe src="godot/index.html" class="fixed-size" frameborder="0"></iframe>
         </div>
-        <script></script>
-    </body>
+        <div class="web fixed-size">
+            <div class="icon">
+                <a href="https://www.xida.de" target="_blank"><img src="assets/xida.png" /></a>
+            </div>
+            <span id="count"></span>
+            <button id="decrement-button" onclick="decrement()">DECREMENT</button>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+
 </html>
