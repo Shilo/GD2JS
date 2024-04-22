@@ -2,6 +2,8 @@ const js := """
 (function () {
 	if (parent.GD2JS) return
 
+	let doc = parent.document;
+
 	const self = {
 		metadata: {},
 		_listeners: {},
@@ -32,7 +34,7 @@ const js := """
 
 		addEventListener: (type, listener, options) => {
 			const wrappedListener = (event) => listener(...event.detail)
-			document.addEventListener(type, wrappedListener, options)
+			doc.addEventListener(type, wrappedListener, options)
 
 			if (!self._listeners[type])
 				self._listeners[type] = []
@@ -52,7 +54,7 @@ const js := """
 			const index = listeners.findIndex(l => l.listener === listener)
 			if (index === -1) return false
 
-			document.removeEventListener(type, listeners[index].wrappedListener, options)
+			doc.removeEventListener(type, listeners[index].wrappedListener, options)
 
 			listeners.splice(index, 1)
 			if (listeners.length === 0)
@@ -69,19 +71,19 @@ const js := """
 			const listeners = self._listeners[type]
 			if (!listeners) return false
 
-			listeners.forEach(l => document.removeEventListener(type, l.wrappedListener))
+			listeners.forEach(l => doc.removeEventListener(type, l.wrappedListener))
 			delete self._listeners[type]
 			return true
 		},
 		dispatchEvent: (event, ...args) => {
 			if (!(event instanceof Event || typeof event === 'Event'))
 				event = new CustomEvent(event.toString(), { detail: args })
-			return document.dispatchEvent(event)
+			return doc.dispatchEvent(event)
 		},
 		dispatchEventV: (event, argsArray) => {
 			if (!(event instanceof Event || typeof event === 'Event'))
 				event = new CustomEvent(event.toString(), { detail: argsArray })
-			return document.dispatchEvent(event)
+			return doc.dispatchEvent(event)
 		},
 
 		_eval: null,
@@ -107,5 +109,7 @@ const js := """
 		emit_signal_v: (...args) => self.dispatchEventV.apply(null, args),
 	}
 	parent.GD2JS = self
+
+	self.dispatchEvent('GD2JSLoaded')
 }())
 """
