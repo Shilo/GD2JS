@@ -15,7 +15,8 @@ var _js_script_path: String:
 		return path.insert(path.length() - 3, ".js")
 
 var _gd_eval_callback: JavaScriptObject
-var _callbacks: Dictionary
+var _event_callbacks: Dictionary
+var _meta_callables: Dictionary
 
 func _init() -> void:
 	if !enabled: return
@@ -53,22 +54,44 @@ func _gd_eval(code: Array) -> Error:
 func js_set_meta(name: String, value: Variant) -> Variant:
 	if !_is_enabled(): return
 	
+	if value is Callable:
+		value = JavaScriptBridge.create_callback(value as Callable)
+		_meta_callables[name] = value
+	
 	return js.setMeta(name, value)
 
 func js_remove_meta(name: String) -> bool:
 	if !_is_enabled(): return false
+	
+	if _meta_callables[name]:
+		_meta_callables[name] = null
 	
 	return js.removeMeta(name)
 
 func js_clear_all_meta() -> Variant:
 	if !_is_enabled(): return
 	
+	_meta_callables.clear()
 	return js.clearAllMeta()
 
 func js_get_meta(name: String, default: Variant = null) -> Variant:
 	if !_is_enabled(): return
 	
 	return js.getMeta(name, default)
+
+func js_call_meta(name:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3: Variant = NAN, arg4: Variant = NAN) -> Variant:
+	if !_is_enabled(): return
+	
+	if is_nan(arg1): return js.callMeta(name)
+	if is_nan(arg2): return js.callMeta(name, arg1)
+	if is_nan(arg3): return js.callMeta(name, arg1, arg2)
+	if is_nan(arg4): return js.callMeta(name, arg1, arg2, arg3)
+	return js.callMeta(name, arg1, arg2, arg3, arg4)
+
+func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
+	if !_is_enabled(): return
+	
+	return js.callMetaV(name, args)
 
 func js_has_meta(name: String) -> bool:
 	if !_is_enabled(): return false
@@ -91,9 +114,9 @@ func js_connect(type: String, callable: Callable, options: Variant = false) -> J
 	var wrapped_callback := JavaScriptBridge.create_callback(func(args): callable.callv(args))
 	var result: JavaScriptObject = js.addEventListener(type, wrapped_callback, options)
 	
-	if !_callbacks[type]:
-		_callbacks[type] = []
-	_callbacks[type].push_back({
+	if !_event_callbacks[type]:
+		_event_callbacks[type] = []
+	_event_callbacks[type].push_back({
 		"callback": callable,
 		"wrapped_callback": wrapped_callback
 	})
@@ -108,7 +131,7 @@ func js_is_connected(type: String, callable: Callable) -> bool:
 func js_disconnect(type: String, callable: Callable, options: Variant = false) -> bool:
 	if !_is_enabled(): return false
 	
-	var callbacks: Array = _callbacks[type]
+	var callbacks: Array = _event_callbacks[type]
 	if !callbacks: return false
 	
 	var index: int = -1
@@ -124,7 +147,7 @@ func js_disconnect(type: String, callable: Callable, options: Variant = false) -
 	
 	callbacks.remove_at(index)
 	if callbacks.size() == 0:
-		_callbacks.erase(type)
+		_event_callbacks.erase(type)
 	
 	return result
 
@@ -132,15 +155,15 @@ func js_disconnect_all(type: String = "") -> bool:
 	if !_is_enabled(): return false
 	
 	if !type:
-		for callback_type in _callbacks:
+		for callback_type in _event_callbacks:
 			js.removeAllEventListeners(callback_type)
 		return true
 	
 	var result: bool = js.removeAllEventListeners(type)
 	
-	var callbacks = _callbacks[type]
+	var callbacks = _event_callbacks[type]
 	if callbacks:
-		_callbacks.erase(type)
+		_event_callbacks.erase(type)
 	
 	return result
 
@@ -156,5 +179,4 @@ func js_emit_signal(type:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3:
 func js_emit_signal_v(type:String, args: Array[Variant]) -> JavaScriptObject:
 	if !_is_enabled(): return
 	
-	args.push_front(type)
-	return js_emit_signal.callv(args)
+	return js.dispatchEventV(type, args)

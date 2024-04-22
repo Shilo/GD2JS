@@ -10,6 +10,22 @@ const js := """
 		removeMeta: (name) => delete self.metadata[name],
 		clearAllMeta: () => self.metadata = {},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
+		callMeta: (name, ...args) => {
+			const value = self.getMeta(name)
+			if (typeof value === 'function')
+				return value(...args)
+
+			console.warn(`GD2JS: Meta "${name}" is not a function.`)
+			return undefined
+		},
+		callMetaV: (name, argsArray) => {
+			const value = self.getMeta(name)
+			if (typeof value === 'function')
+				return value(...argsArray)
+
+			console.warn(`GD2JS: Meta "${name}" is not a function.`)
+			return undefined
+		},
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
 		getMetaKeys: () => JSON.stringify(Object.keys(self.metadata)),
 		getMetaData: () => JSON.stringify(self.metadata),
@@ -62,9 +78,14 @@ const js := """
 				event = new CustomEvent(event.toString(), { detail: args })
 			return document.dispatchEvent(event)
 		},
+		dispatchEventV: (event, argsArray) => {
+			if (!(event instanceof Event || typeof event === 'Event'))
+				event = new CustomEvent(event.toString(), { detail: argsArray })
+			return document.dispatchEvent(event)
+		},
 
 		_eval: null,
-		eval: (...code) => self._eval ? self._eval(...code) : console.warn('GD2JS: eval is disabled.'),
+		eval: (...code) => self._eval ? self._eval(...code) : console.warn('GD2JS: Eval is disabled.'),
 
 		// Convenience methods for Godot style.
 
@@ -72,6 +93,8 @@ const js := """
 		remove_meta: (...args) => self.removeMeta.apply(null, args),
 		clear_all_meta: (...args) => self.clearAllMeta.apply(null, args),
 		get_meta: (...args) => self.getMeta.apply(null, args),
+		call_meta: (...args) => self.callMeta.apply(null, args),
+		call_meta_v: (...args) => self.callMetaV.apply(null, args),
 		has_meta: (...args) => self.hasMeta.apply(null, args),
 		get_meta_list: (...args) => self.getMetaKeys.apply(null, args),
 		get_meta_data: (...args) => self.getMetaData.apply(null, args),
@@ -81,6 +104,7 @@ const js := """
 		disconnect: (...args) => self.removeEventListener.apply(null, args),
 		disconnect_all: (...args) => self.removeAllEventListeners.apply(null, args),
 		emit_signal: (...args) => self.dispatchEvent.apply(null, args),
+		emit_signal_v: (...args) => self.dispatchEventV.apply(null, args),
 	}
 	parent.GD2JS = self
 }())
