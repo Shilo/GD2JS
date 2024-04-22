@@ -1,5 +1,7 @@
 extends Node
 
+const JS_UNDEFINED: float = NAN
+
 var enabled: bool = OS.has_feature("web"):
 	set(__): pass
 
@@ -56,8 +58,9 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 	value = js_variant(value)
 	
 	if value is Callable:
-		value = JavaScriptBridge.create_callback(value as Callable)
-		_meta_callables[name] = value
+		var callable: Callable = value
+		value = JavaScriptBridge.create_callback(callable)
+		_meta_callables[name] = {"callable": callable, "wrapped_callable": value}
 	
 	return js.setMeta(name, value)
 
@@ -81,21 +84,35 @@ func js_get_meta(name: String, default: Variant = null) -> Variant:
 	
 	return js.getMeta(name, default)
 
-func js_call_meta(name:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3: Variant = NAN, arg4: Variant = NAN) -> Variant:
+func js_call_meta(name:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = JS_UNDEFINED, arg3: Variant = JS_UNDEFINED, arg4: Variant = JS_UNDEFINED) -> Variant:
 	if !_is_enabled(): return
+	
+	if _meta_callables.has(name):
+		var callable: Callable = _meta_callables[name].callable
+		if _is_undefined(arg1): return callable.call()
+		if _is_undefined(arg2): return callable.call(arg1)
+		if _is_undefined(arg3): return callable.call(arg1, arg2)
+		if _is_undefined(arg4): return callable.call(arg1, arg2, arg3)
+		return callable.call(arg1, arg2, arg3, arg4)
+	
 	arg1 = js_variant(arg1)
 	arg2 = js_variant(arg2)
 	arg3 = js_variant(arg3)
 	arg4 = js_variant(arg4)
 	
-	if is_nan(arg1): return js.callMeta(name)
-	if is_nan(arg2): return js.callMeta(name, arg1)
-	if is_nan(arg3): return js.callMeta(name, arg1, arg2)
-	if is_nan(arg4): return js.callMeta(name, arg1, arg2, arg3)
+	if _is_undefined(arg1): return js.callMeta(name)
+	if _is_undefined(arg2): return js.callMeta(name, arg1)
+	if _is_undefined(arg3): return js.callMeta(name, arg1, arg2)
+	if _is_undefined(arg4): return js.callMeta(name, arg1, arg2, arg3)
 	return js.callMeta(name, arg1, arg2, arg3, arg4)
 
 func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
 	if !_is_enabled(): return
+	
+	if _meta_callables.has(name):
+		var callable: Callable = _meta_callables[name].callable
+		return callable.callv(args)
+	
 	args = js_variant(args)
 	
 	return js.callMetaV(name, args)
@@ -176,17 +193,17 @@ func js_disconnect_all(type: String = "") -> bool:
 	
 	return result
 
-func js_emit_signal(type:String, arg1: Variant = NAN, arg2: Variant = NAN, arg3: Variant = NAN, arg4: Variant = NAN) -> JavaScriptObject:
+func js_emit_signal(type:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = JS_UNDEFINED, arg3: Variant = JS_UNDEFINED, arg4: Variant = JS_UNDEFINED) -> JavaScriptObject:
 	if !_is_enabled(): return
 	arg1 = js_variant(arg1)
 	arg2 = js_variant(arg2)
 	arg3 = js_variant(arg3)
 	arg4 = js_variant(arg4)
 	
-	if is_nan(arg1): return js.dispatchEvent(type)
-	if is_nan(arg2): return js.dispatchEvent(type, arg1)
-	if is_nan(arg3): return js.dispatchEvent(type, arg1, arg2)
-	if is_nan(arg4): return js.dispatchEvent(type, arg1, arg2, arg3)
+	if _is_undefined(arg1): return js.dispatchEvent(type)
+	if _is_undefined(arg2): return js.dispatchEvent(type, arg1)
+	if _is_undefined(arg3): return js.dispatchEvent(type, arg1, arg2)
+	if _is_undefined(arg4): return js.dispatchEvent(type, arg1, arg2, arg3)
 	return js.dispatchEvent(type, arg1, arg2, arg3, arg4)
 
 func js_emit_signal_v(type:String, args: Array[Variant]) -> JavaScriptObject:
@@ -209,3 +226,6 @@ func js_variant(variant: Variant) -> Variant:
 		return dictionary
 	
 	return variant
+
+func _is_undefined(value: Variant):
+	return value is float && is_nan(value)
