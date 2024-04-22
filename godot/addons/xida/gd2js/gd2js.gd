@@ -180,3 +180,18 @@ func js_emit_signal_v(type:String, args: Array[Variant]) -> JavaScriptObject:
 	if !_is_enabled(): return
 	
 	return js.dispatchEventV(type, args)
+
+func js_variant(variant: Variant) -> Variant:
+	if variant is Array:
+		var array: JavaScriptObject = JavaScriptBridge.create_object("Array")
+		for value in variant:
+			array.push(value)
+		return array
+	
+	if variant is Dictionary:
+		var dictionary: JavaScriptObject = JavaScriptBridge.create_object("Object")
+		for key in variant:
+			dictionary[key] = variant[key]
+		return dictionary
+	
+	return variant
