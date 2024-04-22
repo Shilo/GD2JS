@@ -74,7 +74,7 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 func js_remove_meta(name: String) -> bool:
 	if !_is_enabled(): return false
 	
-	if _meta_callables[name]:
+	if _meta_callables.has(name):
 		_meta_callables[name] = null
 	
 	return js.removeMeta(name)
@@ -146,7 +146,7 @@ func js_connect(type: String, callable: Callable, options: Variant = false) -> J
 	var wrapped_callback := JavaScriptBridge.create_callback(func(args): callable.callv(args))
 	var result: JavaScriptObject = js.addEventListener(type, wrapped_callback, options)
 	
-	if !_event_callbacks[type]:
+	if !_event_callbacks.has(type):
 		_event_callbacks[type] = []
 	_event_callbacks[type].push_back({
 		"callback": callable,
@@ -164,7 +164,7 @@ func js_disconnect(type: String, callable: Callable, options: Variant = false) -
 	if !_is_enabled(): return false
 	options = js_variant(options)
 	
-	var callbacks: Array = _event_callbacks[type]
+	var callbacks: Array = _event_callbacks.get(type)
 	if !callbacks: return false
 	
 	var index: int = -1
@@ -194,7 +194,7 @@ func js_disconnect_all(type: String = "") -> bool:
 	
 	var result: bool = js.removeAllEventListeners(type)
 	
-	var callbacks = _event_callbacks[type]
+	var callbacks = _event_callbacks.get(type)
 	if callbacks:
 		_event_callbacks.erase(type)
 	
