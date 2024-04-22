@@ -125,7 +125,7 @@ func js_call_meta(name:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = JS_
 	if _is_undefined(arg2): return js.callMeta(name, arg1)
 	if _is_undefined(arg3): return js.callMeta(name, arg1, arg2)
 	if _is_undefined(arg4): return js.callMeta(name, arg1, arg2, arg3)
-	return js.callMeta(name, arg1, arg2, arg3, arg4)
+	return js.callMetaAsync(name, arg1, arg2, arg3, arg4)
 
 func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
 	if !_is_enabled(): return
@@ -136,7 +136,7 @@ func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
 	
 	args = js_variant(args)
 	
-	return js.callMetaV(name, args)
+	return js.callMetaVAsync(name, args)
 
 func js_has_meta(name: String) -> bool:
 	if !_is_enabled(): return false
