@@ -200,7 +200,7 @@ func js_disconnect_all(type: String = "") -> bool:
 	
 	return result
 
-func js_emit_signal(type:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = JS_UNDEFINED, arg3: Variant = JS_UNDEFINED, arg4: Variant = JS_UNDEFINED) -> JavaScriptObject:
+func js_emit_signal(type:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = JS_UNDEFINED, arg3: Variant = JS_UNDEFINED, arg4: Variant = JS_UNDEFINED) -> Variant:
 	if !_is_enabled(): return
 	arg1 = js_variant(arg1)
 	arg2 = js_variant(arg2)
@@ -213,7 +213,7 @@ func js_emit_signal(type:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = J
 	if _is_undefined(arg4): return js.dispatchEvent(type, arg1, arg2, arg3)
 	return js.dispatchEvent(type, arg1, arg2, arg3, arg4)
 
-func js_emit_signal_v(type:String, args: Array[Variant]) -> JavaScriptObject:
+func js_emit_signal_v(type:String, args: Array[Variant]) -> Variant:
 	if !_is_enabled(): return
 	args = js_variant(args)
 	
@@ -234,5 +234,5 @@ func js_variant(variant: Variant) -> Variant:
 	
 	return variant
 
-func _is_undefined(value: Variant):
+func _is_undefined(value: Variant) -> bool:
 	return value is float && is_nan(value)
