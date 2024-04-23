@@ -72,7 +72,7 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 		value = JavaScriptBridge.create_callback(func(args: Array):
 			var resolve: JavaScriptObject = args.pop_back()
 			
-			var result: Variant = callable.callv(args)
+			var result: Variant = js_variant(callable.callv(args))
 			
 			if resolve && resolve.resolve:
 				resolve.resolve(result)
@@ -89,7 +89,7 @@ func js_update_meta(name: String, updater: Callable, default: Variant = null) ->
 	var js_updater: JavaScriptObject = JavaScriptBridge.create_callback(func(args: Array):
 		var resolve: JavaScriptObject = args.pop_back()
 		
-		var result = updater.callv(args)
+		var result = js_variant(updater.callv(args))
 		
 		if resolve && resolve.resolve:
 			resolve.resolve(result)
