@@ -248,6 +248,9 @@ func js_emit_signal_v(type:String, args: Array[Variant]) -> Variant:
 	return js.dispatchEventV(type, args)
 
 func js_variant(variant: Variant) -> Variant:
+	if variant is int:
+		return float(variant) # Javascript only has double numbers
+	
 	if variant is Array:
 		var array: JavaScriptObject = JavaScriptBridge.create_object("Array")
 		for value in variant:
