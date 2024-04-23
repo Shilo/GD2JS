@@ -85,6 +85,7 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 
 func js_update_meta(name: String, updater: Callable, default: Variant = null) -> Variant:
 	if !_is_enabled(): return
+	default = js_variant(default)
 	
 	var js_updater: JavaScriptObject = JavaScriptBridge.create_callback(func(args: Array):
 		var resolve: JavaScriptObject = args.pop_back()
