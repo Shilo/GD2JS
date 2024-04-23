@@ -57,7 +57,7 @@ const js := """
 				? new Promise((resolve) => value[KEY_GODOT_CALLABLE](...args, { resolve }))
 				: value(...args, null)
 		},
-		callMetaV: (name, args) => self.callMeta(name, ...args),
+		callMetaV: (name, args = []) => self.callMeta(name, ...args),
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
 		getMetaKeys: () => JSON.stringify(Object.keys(self.metadata)),
 		getMetaData: () => JSON.stringify(self.metadata),
