@@ -5,14 +5,25 @@ const js := """
 	let doc = parent.document;
 
 	const self = {
+		EventType: Object.freeze({
+			LOADED: 'gd2js-loaded',
+			META_CHANGED: 'gd2js-meta-changed',
+		}),
+
 		metadata: {},
 		_listeners: {},
 
-		setMeta: (name, value) => self.metadata[name] = value,
-		updateMeta: (name, updater, defaultValue = null) => self.metadata[name] = updater(self.metadata[name] ?? defaultValue),
+		setMeta: (name, value) => {
+			var oldValue = self.metadata[name]
+			self.metadata[name] = value
+
+			if (oldValue !== value)
+				self.dispatchEvent(self.EventType.META_CHANGED, name, value, oldValue)
+		},
+		updateMeta: (name, updater, defaultValue = null) => self.setMeta(name, updater(self.metadata[name] ?? defaultValue)),
 		updateMetaAsync: async (name, updater, defaultValue = null) => {
 			return new Promise((resolve) => updater(self.metadata[name] ?? defaultValue, { resolve }))
-				.then((value) => self.metadata[name] = value)
+				.then((value) => self.setMeta(name, value))
 		},
 		removeMeta: (name) => delete self.metadata[name],
 		clearAllMeta: () => self.metadata = {},
@@ -135,6 +146,6 @@ const js := """
 	}
 	parent.GD2JS = self
 
-	self.dispatchEvent('GD2JSLoaded')
+	self.dispatchEvent(self.EventType.LOADED)
 }())
 """
