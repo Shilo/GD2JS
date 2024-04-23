@@ -58,6 +58,9 @@ func _gd_eval(code: Array) -> Error:
 	
 	return OK
 
+func js_eval(code: String, use_global_execution_context: bool = false) -> Variant:
+	return JavaScriptBridge.eval(code, use_global_execution_context)
+
 func js_set_meta(name: String, value: Variant) -> Variant:
 	if !_is_enabled(): return
 	value = js_variant(value)
@@ -69,7 +72,8 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 			
 			var result: Variant = callable.callv(args)
 			
-			resolve.resolve(result)
+			if resolve:
+				resolve.resolve(result)
 			return result
 		)
 		_meta_callables[name] = {"callable": callable, "wrapped_callable": value}
