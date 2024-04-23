@@ -72,7 +72,7 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 			
 			var result: Variant = callable.callv(args)
 			
-			if resolve:
+			if resolve && resolve.resolve:
 				resolve.resolve(result)
 			return result
 		)
