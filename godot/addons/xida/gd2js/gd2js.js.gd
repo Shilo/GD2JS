@@ -31,7 +31,7 @@ const js := """
 		callMeta: (name, ...args) => {
 			const value = self.getMeta(name)
 			if (typeof value === 'function')
-				return value(...args)
+				return value(...args, null)
 
 			console.warn(`GD2JS: Meta "${name}" is not a function.`)
 			return undefined
