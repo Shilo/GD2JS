@@ -2,6 +2,11 @@ extends Node
 
 const JS_UNDEFINED: float = NAN
 
+const EventType: Dictionary = {
+	"LOADED": "gd2js-loaded",
+	"META_CHANGED": "gd2js-meta-changed"
+}
+
 var enabled: bool = OS.has_feature("web"):
 	set(__): pass
 

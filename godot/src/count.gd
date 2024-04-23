@@ -1,7 +1,7 @@
 class_name CountLabel extends Label
 
 func _ready():
-	GD2JS.js_connect("gd2js-meta-changed", func(name, value, old_value):
+	GD2JS.js_connect(GD2JS.EventType.META_CHANGED, func(name, value, old_value):
 		if name != "count": return
 		
 		text = str(value)
