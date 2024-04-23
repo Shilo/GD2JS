@@ -65,6 +65,8 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 	if !_is_enabled(): return
 	value = js_variant(value)
 	
+	var is_gd_callable := false
+	
 	if value is Callable:
 		var callable: Callable = value
 		value = JavaScriptBridge.create_callback(func(args: Array):
@@ -77,8 +79,9 @@ func js_set_meta(name: String, value: Variant) -> Variant:
 			return result
 		)
 		_meta_callables[name] = {"callable": callable, "wrapped_callable": value}
+		is_gd_callable = true
 	
-	return js.setMeta(name, value)
+	return js.setMeta(name, value, is_gd_callable)
 
 func js_update_meta(name: String, updater: Callable, default: Variant = null) -> Variant:
 	if !_is_enabled(): return
@@ -88,11 +91,12 @@ func js_update_meta(name: String, updater: Callable, default: Variant = null) ->
 		
 		var result = updater.callv(args)
 		
-		resolve.resolve(result)
+		if resolve && resolve.resolve:
+			resolve.resolve(result)
 		return result
 	)
 	
-	return js.updateMetaAsync(name, js_updater, default)
+	return js._updateMetaAsync(name, js_updater, default)
 
 func js_remove_meta(name: String) -> bool:
 	if !_is_enabled(): return false
@@ -130,11 +134,11 @@ func js_call_meta(name:String, arg1: Variant = JS_UNDEFINED, arg2: Variant = JS_
 	arg3 = js_variant(arg3)
 	arg4 = js_variant(arg4)
 	
-	if _is_undefined(arg1): return js.callMetaAsync(name)
-	if _is_undefined(arg2): return js.callMetaAsync(name, arg1)
-	if _is_undefined(arg3): return js.callMetaAsync(name, arg1, arg2)
-	if _is_undefined(arg4): return js.callMetaAsync(name, arg1, arg2, arg3)
-	return js.callMetaAsync(name, arg1, arg2, arg3, arg4)
+	if _is_undefined(arg1): return js.callMeta(name)
+	if _is_undefined(arg2): return js.callMeta(name, arg1)
+	if _is_undefined(arg3): return js.callMeta(name, arg1, arg2)
+	if _is_undefined(arg4): return js.callMeta(name, arg1, arg2, arg3)
+	return js.callMeta(name, arg1, arg2, arg3, arg4)
 
 func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
 	if !_is_enabled(): return
@@ -145,7 +149,7 @@ func js_call_meta_v(name:String, args: Array[Variant]) -> Variant:
 	
 	args = js_variant(args)
 	
-	return js.callMetaVAsync(name, args)
+	return js.callMetaV(name, args)
 
 func js_has_meta(name: String) -> bool:
 	if !_is_enabled(): return false

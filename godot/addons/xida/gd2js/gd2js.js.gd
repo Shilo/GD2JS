@@ -2,6 +2,22 @@ const js := """
 (function () {
 	if (parent.GD2JS) return
 
+	const KEY_GODOT_CALLABLE = '__godotCallable'
+	const TYPE_GODOT_CALLABLE = 1;
+
+	function _is_function(value) {
+		if (typeof value === 'function')
+			return true;
+
+		if (typeof value == 'object'
+			&& value !== null
+			&& value.hasOwnProperty(KEY_GODOT_CALLABLE)
+			&& typeof value[KEY_GODOT_CALLABLE] === 'function')
+			return TYPE_GODOT_CALLABLE;
+
+		return false;
+	}
+
 	let doc = parent.document;
 
 	const self = {
@@ -13,53 +29,35 @@ const js := """
 		metadata: {},
 		_listeners: {},
 
-		setMeta: (name, value) => {
+		setMeta: (name, value, isGodotCallable = false) => {
 			var oldValue = self.metadata[name]
-			self.metadata[name] = value
+			self.metadata[name] = isGodotCallable ? { [KEY_GODOT_CALLABLE]: value } : value
 
 			if (oldValue !== value)
 				self.dispatchEvent(self.EventType.META_CHANGED, name, value, oldValue)
 		},
-		updateMeta: (name, updater, defaultValue = null) => self.setMeta(name, updater(self.metadata[name] ?? defaultValue)),
-		updateMetaAsync: async (name, updater, defaultValue = null) => {
-			return new Promise((resolve) => updater(self.metadata[name] ?? defaultValue, { resolve }))
-				.then((value) => self.setMeta(name, value))
+		_updateMetaAsync: async (name, updater, defaultValue = null) => {
+			const value = await new Promise((resolve) => updater(self.metadata[name] ?? defaultValue, { resolve }));
+			return self.setMeta(name, value);
 		},
+		updateMeta: (name, updater, defaultValue = null) => self.setMeta(name, updater(self.metadata[name] ?? defaultValue)),
 		removeMeta: (name) => delete self.metadata[name],
 		clearAllMeta: () => self.metadata = {},
 		getMeta: (name, defaultValue = null) => self.metadata[name] ?? defaultValue,
 		callMeta: (name, ...args) => {
 			const value = self.getMeta(name)
-			if (typeof value === 'function')
-				return value(...args, null)
 
-			console.warn(`GD2JS: Meta "${name}" is not a function.`)
-			return undefined
-		},
-		callMetaAsync: async (name, ...args) => {
-			const value = self.getMeta(name)
-			if (typeof value === 'function')
-				return new Promise((resolve) => value(...args, { resolve }))
+			let isFunction = _is_function(value)
+			if (!isFunction) {
+				console.warn(`GD2JS: Meta "${name}" is not a function.`)
+				return undefined
+			}
 
-			console.warn(`GD2JS: Meta "${name}" is not a function.`)
-			return undefined
+			return isFunction === TYPE_GODOT_CALLABLE
+				? new Promise((resolve) => value[KEY_GODOT_CALLABLE](...args, { resolve }))
+				: value(...args, null)
 		},
-		callMetaV: async (name, argsArray) => {
-			const value = self.getMeta(name)
-			if (typeof value === 'function')
-				return value(...argsArray)
-
-			console.warn(`GD2JS: Meta "${name}" is not a function.`)
-			return undefined
-		},
-		callMetaVAsync: async (name, argsArray) => {
-			const value = self.getMeta(name)
-			if (typeof value === 'function')
-				return new Promise((resolve) => value(...argsArray, { resolve }))
-
-			console.warn(`GD2JS: Meta "${name}" is not a function.`)
-			return undefined
-		},
+		callMetaV: (name, args) => self.callMeta(name, ...args),
 		hasMeta: (name) => self.metadata.hasOwnProperty(name),
 		getMetaKeys: () => JSON.stringify(Object.keys(self.metadata)),
 		getMetaData: () => JSON.stringify(self.metadata),
@@ -125,14 +123,11 @@ const js := """
 
 		set_meta: (...args) => self.setMeta.apply(null, args),
 		update_meta: (...args) => self.updateMeta.apply(null, args),
-		update_meta_async: async (...args) => await self.updateMetaAsync.apply(null, args),
 		remove_meta: (...args) => self.removeMeta.apply(null, args),
 		clear_all_meta: (...args) => self.clearAllMeta.apply(null, args),
 		get_meta: (...args) => self.getMeta.apply(null, args),
 		call_meta: (...args) => self.callMeta.apply(null, args),
-		call_meta_async: async (...args) => await self.callMetaAsync.apply(null, args),
 		call_meta_v: (...args) => self.callMetaV.apply(null, args),
-		call_meta_v_async: async (...args) => await self.callMetaVAsync.apply(null, args),
 		has_meta: (...args) => self.hasMeta.apply(null, args),
 		get_meta_list: (...args) => self.getMetaKeys.apply(null, args),
 		get_meta_data: (...args) => self.getMetaData.apply(null, args),
